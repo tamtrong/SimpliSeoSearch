@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: SimpliSeoSearch.API/Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  blazorapp:
+    build:
+      context: .
+      dockerfile: SimpliSeoSearch.BlazorApp/Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - webapi

@@ -1,0 +1,6 @@
+@SimpliSeoSearch.API_HostAddress = http://localhost:5282
+
+POST {{SimpliSeoSearch.API_HostAddress}}/api/SearchSeo/Search
+#Accept: application/json
+
+###

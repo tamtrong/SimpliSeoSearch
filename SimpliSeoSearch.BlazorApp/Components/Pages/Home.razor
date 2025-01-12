@@ -1,0 +1,75 @@
+﻿@page "/"
+@using Microsoft.Extensions.Options
+@using SimpliSeoSearch.BlazorApp.Settings
+@using SimpliSeoSearch.Core.Models
+@inject HttpClient Http
+@inject IOptions<SearchApiSettings> ApiSettings
+
+
+<h3>SEO Rank Search</h3>
+<i>Search hints: e-settlements, www.sympli.com.au</i>
+<br/>
+
+<EditForm FormName="searchForm" Model="@searchRequest" OnValidSubmit="SubmitSearch">
+    <label>Keyword:</label>
+    <InputText @bind-Value="@searchRequest.Keyword" />
+
+    <label>URL:</label>
+    <InputText @bind-Value="@searchRequest.Url" />
+
+    <label>Search Engines:</label>
+    <InputCheckbox @bind-Value="searchRequest.GoogleChecked" /> Google
+    <InputCheckbox @bind-Value="searchRequest.BingChecked" /> Bing
+
+    <button type="submit">Search</button>
+</EditForm>
+<br/>
+
+@if (searchResults != null)
+{
+    <h5>Search Results:</h5>
+    <ul>
+        @foreach (var result in searchResults)
+        {
+            <li>@result.Key: @string.Join(", ", result.Value)</li>
+        }
+    </ul>
+}
+
+@code {
+
+    [SupplyParameterFromForm(FormName = "searchForm")]
+    private SearchRequest searchRequest { get; set; } = new()
+    {
+        Keyword = "e-settlements",
+        Url = "www.sympli.com.au",
+        GoogleChecked = true,
+        BingChecked = true
+    };
+
+    private Dictionary<string, List<int>> searchResults;
+
+    private async Task SubmitSearch()
+    {
+        var engines = new List<string>();
+        if (searchRequest.GoogleChecked) engines.Add("Google Search");
+        if (searchRequest.BingChecked) engines.Add("Bing Search");
+
+        var response = await Http.PostAsJsonAsync($"{ApiSettings.Value.BaseUrl}/api/SearchSeo/Search", new SearchSeoRequest
+        {
+            Keyword = searchRequest.Keyword,
+            Url = searchRequest.Url,
+            SearchEngines = engines
+        });
+
+        searchResults = await response.Content.ReadFromJsonAsync<Dictionary<string, List<int>>>();
+    }
+
+    public class SearchRequest
+    {
+        public string Keyword { get; set; }
+        public string Url { get; set; }
+        public bool GoogleChecked { get; set; }
+        public bool BingChecked { get; set; }
+    }
+}

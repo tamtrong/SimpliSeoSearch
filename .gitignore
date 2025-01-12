@@ -1,0 +1,30 @@
+# Build and binary directories
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Log and debug files
+*.log
+*.vspscc
+*.vssscc
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+.vs/
+*.tlog
+
+# Build output
+publish/
